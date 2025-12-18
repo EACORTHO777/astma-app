@@ -6,26 +6,43 @@
   <title>Astma-kontroll</title>
 
   <link rel="stylesheet" href="styles.css">
+  <link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#007bff">
+<script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/service-worker.js");
+  }
+</script>
 </head>
 <body>
 
   <h1>🌬️ Astma-kontroll</h1>
 
-  <div class="card blue">
-    <h2>🔵 Blå inhalator</h2>
-    <div class="count" id="blueCount">–</div>
-  <button id="blueBtn">Ta puff</button>
-<button id="blueResetBtn">Ny inhalator</button>
-    <div id="blueWarning" class="warning"></div>
+<div class="card blue">
+  <h2>🔵 Blå inhalator</h2>
+  <div class="count" id="blueCount">–</div>
+
+  <div class="controls">
+    <button id="blueMinus">➖</button>
+    <button id="bluePlus">➕</button>
   </div>
 
-  <div class="card orange">
-    <h2>🟠 Orange inhalator</h2>
-    <div class="count" id="orangeCount">–</div>
- <button id="orangeBtn">Ta puff</button>
-<button id="orangeResetBtn">Ny inhalator</button>
-    <div id="orangeWarning" class="warning"></div>
+  <button class="reset" id="blueResetBtn">Ny inhalator</button>
+  <div id="blueWarning" class="warning"></div>
+</div>
+
+<div class="card orange">
+  <h2>🟠 Orange inhalator</h2>
+  <div class="count" id="orangeCount">–</div>
+
+  <div class="controls">
+    <button id="orangeMinus">➖</button>
+    <button id="orangePlus">➕</button>
   </div>
+
+  <button class="reset" id="orangeResetBtn">Ny inhalator</button>
+  <div id="orangeWarning" class="warning"></div>
+</div>
 
   <script type="module" src="script.js"></script>
 </body>

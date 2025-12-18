@@ -8,8 +8,8 @@ import {
   runTransaction
 } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
 
-const WARNING_LIMIT = 10;
 const MAX_PUFFS = 120;
+const WARNING_LIMIT = 10;
 
 // 🔹 Hämta Firebase-config
 const configResponse = await fetch("./config.json");
@@ -27,14 +27,17 @@ const orangeRef = ref(db, "apps/astmaApp/inhalers/orange");
 // 🔹 UI-element
 const blueCountEl = document.getElementById("blueCount");
 const orangeCountEl = document.getElementById("orangeCount");
+
 const blueWarningEl = document.getElementById("blueWarning");
 const orangeWarningEl = document.getElementById("orangeWarning");
 
-const blueBtn = document.getElementById("blueBtn");
-const orangeBtn = document.getElementById("orangeBtn");
+const blueMinus = document.getElementById("blueMinus");
+const bluePlus = document.getElementById("bluePlus");
+const blueReset = document.getElementById("blueResetBtn");
 
-const blueResetBtn = document.getElementById("blueResetBtn");
-const orangeResetBtn = document.getElementById("orangeResetBtn");
+const orangeMinus = document.getElementById("orangeMinus");
+const orangePlus = document.getElementById("orangePlus");
+const orangeReset = document.getElementById("orangeResetBtn");
 
 // 🔹 Säkerställ startvärde
 async function ensureInitialValue(ref) {
@@ -69,35 +72,7 @@ onValue(orangeRef, (snapshot) => {
   updateUI(snapshot.val() ?? 0, orangeCountEl, orangeWarningEl);
 });
 
-// ➖ Ta puff (race-safe)
-blueBtn.addEventListener("click", () => {
-  runTransaction(blueRef, (current) => {
-    if (current > 0) return current - 1;
-    return current;
-  });
-});
-
-orangeBtn.addEventListener("click", () => {
-  runTransaction(orangeRef, (current) => {
-    if (current > 0) return current - 1;
-    return current;
-  });
-});
-
-// 🔁 Ny inhalator (reset till 120)
-blueResetBtn.addEventListener("click", () => {
-  set(blueRef, MAX_PUFFS);
-});
-
-orangeResetBtn.addEventListener("click", () => {
-  set(orangeRef, MAX_PUFFS);
-});
-
-const blueMinus = document.getElementById("blueMinus");
-const bluePlus = document.getElementById("bluePlus");
-const orangeMinus = document.getElementById("orangeMinus");
-const orangePlus = document.getElementById("orangePlus");
-
+// ➖ Minus = ta puff
 blueMinus.addEventListener("click", () => {
   runTransaction(blueRef, (current) => {
     if (current > 0) return current - 1;
@@ -112,6 +87,7 @@ orangeMinus.addEventListener("click", () => {
   });
 });
 
+// ➕ Plus = lägg tillbaka puff
 bluePlus.addEventListener("click", () => {
   runTransaction(blueRef, (current) => {
     if (current < MAX_PUFFS) return current + 1;
@@ -124,4 +100,13 @@ orangePlus.addEventListener("click", () => {
     if (current < MAX_PUFFS) return current + 1;
     return current;
   });
+});
+
+// 🔁 Ny inhalator = reset
+blueReset.addEventListener("click", () => {
+  set(blueRef, MAX_PUFFS);
+});
+
+orangeReset.addEventListener("click", () => {
+  set(orangeRef, MAX_PUFFS);
 });

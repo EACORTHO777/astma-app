@@ -68,16 +68,19 @@ async function ensureInitial(ref, value) {
 await ensureInitial(blueRef, MAX_PUFFS);
 await ensureInitial(orangeRef, MAX_PUFFS);
 
-// 🔄 Puff-animation
+// 🫁 Puff-animation (STABIL VERSION)
 function puffFeedback(el) {
-  el.classList.remove("puff");
-  void el.offsetWidth;
   el.classList.add("puff");
+  setTimeout(() => {
+    el.classList.remove("puff");
+  }, 300);
 }
 
-// 🔄 Uppdatera UI + varningsfärger
+// 🔄 UI + varningsfärger
 function updateUI(count, countEl, warningEl, cardEl) {
-  countEl.innerText = count;
+  if (countEl.innerText !== String(count)) {
+    countEl.innerText = count;
+  }
 
   cardEl.classList.remove("warning", "critical");
 
@@ -107,7 +110,7 @@ function updateHistory(logs, todayEl, historyEl) {
   todayEl.innerText = `Idag: ${todayCount} doser`;
 
   let total7 = 0;
-  let yesterday = logs?.[getDate(-1)] ?? 0;
+  const yesterday = logs?.[getDate(-1)] ?? 0;
 
   for (let i = 0; i < 7; i++) {
     total7 += logs?.[getDate(-i)] ?? 0;

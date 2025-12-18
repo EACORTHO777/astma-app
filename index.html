@@ -43,5 +43,15 @@
 </div>
 
   <script type="module" src="script.js"></script>
+
+  <script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.getRegistrations().then(registrations => {
+      for (const reg of registrations) {
+        reg.unregister();
+      }
+    });
+  }
+</script>
 </body>
 </html>

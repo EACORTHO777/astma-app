@@ -20,13 +20,12 @@ const firebaseConfig = configData.firebase;
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// 🔹 Datum-hjälpare
+// 🔹 Datum helpers
 function getDate(offset = 0) {
   const d = new Date();
   d.setDate(d.getDate() + offset);
   return d.toISOString().split("T")[0];
 }
-
 const today = getDate(0);
 
 // 🔹 Databas-referenser
@@ -37,6 +36,9 @@ const blueLogsRef = ref(db, "apps/astmaApp/logs/blue");
 const orangeLogsRef = ref(db, "apps/astmaApp/logs/orange");
 
 // 🔹 UI-element
+const blueCard = document.querySelector(".card.blue");
+const orangeCard = document.querySelector(".card.orange");
+
 const blueCountEl = document.getElementById("blueCount");
 const orangeCountEl = document.getElementById("orangeCount");
 
@@ -57,96 +59,100 @@ const orangeMinus = document.getElementById("orangeMinus");
 const orangePlus = document.getElementById("orangePlus");
 const orangeReset = document.getElementById("orangeResetBtn");
 
-// 🔹 Säkerställ startvärden
+// 🔹 Initiera värden
 async function ensureInitial(ref, value) {
   const snap = await get(ref);
-  if (snap.val() === null) {
-    await set(ref, value);
-  }
+  if (snap.val() === null) await set(ref, value);
 }
 
 await ensureInitial(blueRef, MAX_PUFFS);
 await ensureInitial(orangeRef, MAX_PUFFS);
 
-// 🔄 UI – puffar kvar
-function updateUI(count, countEl, warningEl) {
+// 🔄 Puff-animation
+function puffFeedback(el) {
+  el.classList.remove("puff");
+  void el.offsetWidth;
+  el.classList.add("puff");
+}
+
+// 🔄 Uppdatera UI + varningsfärger
+function updateUI(count, countEl, warningEl, cardEl) {
   countEl.innerText = count;
+
+  cardEl.classList.remove("warning", "critical");
 
   if (count === 0) {
     warningEl.innerText = "❌ Slut – byt inhalator NU";
+    cardEl.classList.add("critical");
   } else if (count <= WARNING_LIMIT) {
     warningEl.innerText = "⚠️ Dags att köpa ny inhalator";
+    cardEl.classList.add("warning");
   } else {
     warningEl.innerText = "";
   }
 }
 
-onValue(blueRef, (snap) => {
-  updateUI(snap.val() ?? 0, blueCountEl, blueWarningEl);
+// 🔄 Live-sync puffar kvar
+onValue(blueRef, snap => {
+  updateUI(snap.val() ?? 0, blueCountEl, blueWarningEl, blueCard);
 });
 
-onValue(orangeRef, (snap) => {
-  updateUI(snap.val() ?? 0, orangeCountEl, orangeWarningEl);
+onValue(orangeRef, snap => {
+  updateUI(snap.val() ?? 0, orangeCountEl, orangeWarningEl, orangeCard);
 });
 
 // 🔄 Dagssummering + historik
 function updateHistory(logs, todayEl, historyEl) {
-  let todayCount = logs?.[today] ?? 0;
-  todayEl.innerText = `Idag: ${todayCount} puffar`;
+  const todayCount = logs?.[today] ?? 0;
+  todayEl.innerText = `Idag: ${todayCount} doser`;
 
   let total7 = 0;
-  let rows = [];
+  let yesterday = logs?.[getDate(-1)] ?? 0;
 
   for (let i = 0; i < 7; i++) {
-    const date = getDate(-i);
-    const count = logs?.[date] ?? 0;
-    total7 += count;
-
-    if (i === 1) {
-      rows.push(`Igår: ${count} puffar`);
-    }
+    total7 += logs?.[getDate(-i)] ?? 0;
   }
 
-  rows.push(`Senaste 7 dagar: ${total7} puffar`);
-  historyEl.innerText = rows.join(" · ");
+  historyEl.innerText =
+    `Igår: ${yesterday} doser · Senaste 7 dagar: ${total7} doser`;
 }
 
-onValue(blueLogsRef, (snap) => {
+onValue(blueLogsRef, snap => {
   updateHistory(snap.val(), blueTodayEl, blueHistoryEl);
 });
 
-onValue(orangeLogsRef, (snap) => {
+onValue(orangeLogsRef, snap => {
   updateHistory(snap.val(), orangeTodayEl, orangeHistoryEl);
 });
 
-// ➖ Minus = ta puff + logga
-function takePuff(inhalerRef, logsRef) {
+// ➖ Ta puff + logga
+function takePuff(inhalerRef, logsRef, countEl) {
   const todayRef = ref(db, `${logsRef.key}/${today}`);
 
-  runTransaction(inhalerRef, (current) => {
-    if (current > 0) return current - 1;
-    return current;
-  });
+  puffFeedback(countEl);
 
-  runTransaction(todayRef, (current) => {
-    return (current ?? 0) + 1;
-  });
+  runTransaction(inhalerRef, current =>
+    current > 0 ? current - 1 : current
+  );
+
+  runTransaction(todayRef, current =>
+    (current ?? 0) + 1
+  );
 }
 
-blueMinus.addEventListener("click", () => {
-  takePuff(blueRef, blueLogsRef);
-});
+blueMinus.addEventListener("click", () =>
+  takePuff(blueRef, blueLogsRef, blueCountEl)
+);
 
-orangeMinus.addEventListener("click", () => {
-  takePuff(orangeRef, orangeLogsRef);
-});
+orangeMinus.addEventListener("click", () =>
+  takePuff(orangeRef, orangeLogsRef, orangeCountEl)
+);
 
-// ➕ Plus = korrigera
+// ➕ Lägg tillbaka puff (korrigering)
 function addBack(inhalerRef) {
-  runTransaction(inhalerRef, (current) => {
-    if (current < MAX_PUFFS) return current + 1;
-    return current;
-  });
+  runTransaction(inhalerRef, current =>
+    current < MAX_PUFFS ? current + 1 : current
+  );
 }
 
 bluePlus.addEventListener("click", () => addBack(blueRef));

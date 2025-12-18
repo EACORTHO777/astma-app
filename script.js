@@ -92,3 +92,36 @@ blueResetBtn.addEventListener("click", () => {
 orangeResetBtn.addEventListener("click", () => {
   set(orangeRef, MAX_PUFFS);
 });
+
+const blueMinus = document.getElementById("blueMinus");
+const bluePlus = document.getElementById("bluePlus");
+const orangeMinus = document.getElementById("orangeMinus");
+const orangePlus = document.getElementById("orangePlus");
+
+blueMinus.addEventListener("click", () => {
+  runTransaction(blueRef, (current) => {
+    if (current > 0) return current - 1;
+    return current;
+  });
+});
+
+orangeMinus.addEventListener("click", () => {
+  runTransaction(orangeRef, (current) => {
+    if (current > 0) return current - 1;
+    return current;
+  });
+});
+
+bluePlus.addEventListener("click", () => {
+  runTransaction(blueRef, (current) => {
+    if (current < MAX_PUFFS) return current + 1;
+    return current;
+  });
+});
+
+orangePlus.addEventListener("click", () => {
+  runTransaction(orangeRef, (current) => {
+    if (current < MAX_PUFFS) return current + 1;
+    return current;
+  });
+});

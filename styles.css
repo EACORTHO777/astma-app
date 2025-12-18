@@ -158,3 +158,29 @@ button + button {
 .count.puff {
   animation: puff 0.25s ease;
 }
+
+.card.warning {
+  background: linear-gradient(
+    180deg,
+    #fff7e6 0%,
+    #ffffff 60%
+  );
+}
+
+.card.critical {
+  background: linear-gradient(
+    180deg,
+    #ffecec 0%,
+    #ffffff 60%
+  );
+}
+
+@keyframes puff {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+.count.puff {
+  animation: puff 0.25s ease;
+}

@@ -1,0 +1,11 @@
+{
+  "firebase": {
+    "apiKey": "AIzaSyB177SHk2mk3leIILG5U19rpNFhDEd_5CM",
+    "authDomain": "handlingslista-9204a.firebaseapp.com",
+    "databaseURL": "https://handlingslista-9204a-default-rtdb.europe-west1.firebasedatabase.app",
+    "projectId": "handlingslista-9204a",
+    "storageBucket": "handlingslista-9204a.appspot.com",
+    "messagingSenderId": "87606086562",
+    "appId": "1:87606086562:web:49d1daea84d64dfbe580fb"
+  }
+}

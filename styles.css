@@ -122,3 +122,19 @@ h1 {
 .card.critical {
   background-color: #ffecec;
 }
+
+@keyframes puff {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.08);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.count.puff {
+  animation: puff 0.25s ease;
+}

@@ -127,3 +127,15 @@ h1 {
 .card.critical {
   background: linear-gradient(180deg, #FFE1E1 0%, #FFF1F1 60%);
 }
+
+button {
+  font-size: 16px;
+}
+
+.controls button {
+  font-size: 20px;
+}
+
+button:focus {
+  outline: none;
+}

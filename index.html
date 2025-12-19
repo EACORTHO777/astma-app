@@ -2,56 +2,57 @@
 <html lang="sv">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Astma-kontroll</title>
 
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="manifest" href="manifest.json" />
-<meta name="theme-color" content="#007bff">
+  <!-- Cache-busting: ändra v= vid varje release -->
+  <link rel="stylesheet" href="styles.css?v=ui-2024-12-19" />
 
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#007bff" />
 </head>
 <body>
 
   <h1>🌬️ Astma-kontroll</h1>
 
-<div class="card blue">
-  <h2>🔵 Blå inhalator</h2>
-  <div class="count" id="blueCount">–</div>
-<div class="today" id="blueToday">Idag: 0 puffar</div>
-  <div class="controls">
-    <button id="blueMinus">➖</button>
-    <button id="bluePlus">➕</button>
+  <!-- BLÅ INHALATOR -->
+  <div class="card blue">
+    <h2>🔵 Blå inhalator</h2>
+
+    <div class="count" id="blueCount">–</div>
+    <div class="today" id="blueToday">Idag: 0 puffar</div>
+
+    <div class="controls">
+      <button id="blueMinus">➖</button>
+      <button id="bluePlus">➕</button>
+    </div>
+
+    <button class="reset" id="blueResetBtn">Ny inhalator</button>
+
+    <div id="blueWarning" class="warning"></div>
+    <div class="history" id="blueHistory"></div>
   </div>
 
-  <button class="reset" id="blueResetBtn">Ny inhalator</button>
-  <div id="blueWarning" class="warning"></div>
-  <div class="history" id="blueHistory"></div>
-</div>
+  <!-- ORANGE INHALATOR -->
+  <div class="card orange">
+    <h2>🟠 Orange inhalator</h2>
 
-<div class="card orange">
-  <h2>🟠 Orange inhalator</h2>
-  <div class="count" id="orangeCount">–</div>
-<div class="today" id="orangeToday">Idag: 0 puffar</div>
-  <div class="controls">
-    <button id="orangeMinus">➖</button>
-    <button id="orangePlus">➕</button>
+    <div class="count" id="orangeCount">–</div>
+    <div class="today" id="orangeToday">Idag: 0 puffar</div>
+
+    <div class="controls">
+      <button id="orangeMinus">➖</button>
+      <button id="orangePlus">➕</button>
+    </div>
+
+    <button class="reset" id="orangeResetBtn">Ny inhalator</button>
+
+    <div id="orangeWarning" class="warning"></div>
+    <div class="history" id="orangeHistory"></div>
   </div>
 
-  <button class="reset" id="orangeResetBtn">Ny inhalator</button>
-  <div id="orangeWarning" class="warning"></div>
-  <div class="history" id="orangeHistory"></div>
-</div>
+  <!-- Cache-busting även för JS -->
+  <script type="module" src="script.js?v=ui-2024-12-19"></script>
 
-  <script type="module" src="script.js"></script>
-
-  <script>
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.getRegistrations().then(registrations => {
-      for (const reg of registrations) {
-        reg.unregister();
-      }
-    });
-  }
-</script>
 </body>
 </html>

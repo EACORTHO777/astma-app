@@ -11,8 +11,14 @@ import {
 const MAX_PUFFS = 120;
 const WARNING_LIMIT = 10;
 
-// 🔹 Firebase-config
-const configResponse = await fetch("./config.json");
+// 🔹 Dynamisk Firebase-config
+// Vi kollar om vi är på polarens framtida Netlify-adress
+const isPolare = window.location.hostname.includes('astma-polare'); 
+
+// Väljer rätt fil baserat på adressen
+const configPath = isPolare ? "./config-polare.json" : "./config.json";
+
+const configResponse = await fetch(configPath);
 const configData = await configResponse.json();
 const firebaseConfig = configData.firebase;
 

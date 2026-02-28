@@ -1,0 +1,11 @@
+{
+  "firebase": {
+    "apiKey": "AIzaSyA42czbL632BPdfus8d-1pZ85FACUFSWDM",
+    "authDomain": "astma-polare.firebaseapp.com",
+    "databaseURL": "https://astma-polare-default-rtdb.europe-west1.firebasedatabase.app",
+    "projectId": "astma-polare",
+    "storageBucket": "astma-polare.firebasestorage.app",
+    "messagingSenderId": "216391011426",
+    "appId": "1:216391011426:web:4c774288a3df31283cd53b"
+  }
+}

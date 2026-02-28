@@ -134,16 +134,21 @@ onValue(orangeLogsRef, snap => {
   updateHistory(snap.val(), orangeTodayEl, orangeHistoryEl);
 });
 
-// ➖ Ta puff + logga
+// ➖ Ta puff + logga (Korrigerad version)
 function takePuff(inhalerRef, logsRef, countEl) {
-  const todayRef = ref(db, `${logsRef.key}/${today}`);
+  // Vi måste berätta för Firebase att vi ska in i "apps/astmaApp/logs/"
+  // logsRef.key är antingen "blue" eller "orange"
+  const color = logsRef.key;
+  const todayRef = ref(db, `apps/astmaApp/logs/${color}/${today}`);
 
   puffFeedback(countEl);
 
+  // Minska antalet puffar kvar i inhalatorn
   runTransaction(inhalerRef, current =>
     current > 0 ? current - 1 : current
   );
 
+  // Öka antalet doser för just denna dag
   runTransaction(todayRef, current =>
     (current ?? 0) + 1
   );
@@ -157,12 +162,25 @@ orangeMinus.addEventListener("click", () =>
   takePuff(orangeRef, orangeLogsRef, orangeCountEl)
 );
 
-// ➕ Lägg tillbaka puff (korrigering)
-function addBack(inhalerRef) {
+// ➕ Lägg tillbaka puff (korrigering av både inhalator och logg)
+function addBack(inhalerRef, logsRef) {
+  const color = logsRef.key;
+  const todayRef = ref(db, `apps/astmaApp/logs/${color}/${today}`);
+
+  // Öka i inhalatorn (max 120)
   runTransaction(inhalerRef, current =>
     current < MAX_PUFFS ? current + 1 : current
   );
+
+  // Minska i dagens logg (men inte under 0)
+  runTransaction(todayRef, current =>
+    (current > 0) ? current - 1 : 0
+  );
 }
+
+// Kom ihåg att uppdatera dina EventListeners för Plus-knapparna också:
+bluePlus.addEventListener("click", () => addBack(blueRef, blueLogsRef));
+orangePlus.addEventListener("click", () => addBack(orangeRef, orangeLogsRef));
 
 bluePlus.addEventListener("click", () => addBack(blueRef));
 orangePlus.addEventListener("click", () => addBack(orangeRef));
